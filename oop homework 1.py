@@ -69,6 +69,7 @@ class Reviewer(Mentor):
     def __str__(self):
         return f'Имя: {self.name}\nФамилия: {self.surname}'
 
+# Вычисление среднего балла за домашние работы только на одном курсе путём ввода названия курса.
 def manual_avg_students_grade(students):
     course = input('Введите название курса для расчёта среднего балла по всем студентам: ').capitalize()
     all_grades = []
@@ -79,7 +80,7 @@ def manual_avg_students_grade(students):
             return f'Ошибка. Курс "{course}" не найден.'
     return f'Средняя оценка за домашние задания на курсе "{course}": {round(sum(all_grades) / len(all_grades), 2)}'
 
-
+# Вычисление среднего балла за лекции только на одном курсе путём ввода названия курса.
 def manual_avg_lecturers_grade(lecturers):
     course = input('Введите название курса для расчёта среднего балла по всем лекторам: ').capitalize()
     all_grades = []
@@ -90,11 +91,65 @@ def manual_avg_lecturers_grade(lecturers):
             return f'Ошибка. Курс "{course}" не найден.'
     return f'Средняя оценка за лекции на курсе "{course}": {round(sum(all_grades) / len(all_grades), 2)}'
 
+def courses_list():
+    for student in students_list:
+        for course in student.courses_in_progress:
+            if course not in course_list:
+                course_list.append(course)
+
+# Автоматизированное вычисление среднего балла за домашние работы по каждому из курсов.
+def avg_students_grade(students, courses):
+    all_grades = {}
+    grades_count = {}
+
+    for course in courses:
+        all_grades[course] = 0
+        grades_count[course] = 0
+
+    for student in students:
+        for course in courses:
+            if course in student.grades:
+                all_grades[course] += sum(student.grades[course])
+                grades_count[course] += len(student.grades[course])
+
+    for course in courses:
+        if grades_count[course] > 0:
+            average_grade = all_grades[course] / grades_count[course]
+            print(f'Средняя оценка за домашние задания на курсе "{course}": {round(average_grade,2)}')
+        else:
+            print(f'Нет оценок для курса "{course}"')
+
+# Автоматизированное вычисление среднего балла за домашние работы по каждому из курсов.
+def avg_lecturers_grade(lecturers, courses):
+    all_grades = {}
+    grades_count = {}
+
+    for course in courses:
+        all_grades[course] = 0
+        grades_count[course] = 0
+
+    for lecturer in lecturers:
+        for course in courses:
+            if course in lecturer.grades:
+                all_grades[course] += sum(lecturer.grades[course])
+                grades_count[course] += len(lecturer.grades[course])
+
+    for course in courses:
+        if grades_count[course] > 0:
+            average_grade = all_grades[course] / grades_count[course]
+            print(f'Средняя оценка за лекции на курсе "{course}": {round(average_grade,2)}')
+        else:
+            print(f'Нет оценок для курса "{course}"')
+
+
 # Список студентов для вычисления средней оценки за домашние работы.
 students_list = []
 
 # Список лекторов для вычисления средней оценки за лекции.
 lecturers_list = []
+
+# Список всех курсов всех студентов.
+course_list = []
 
 # Создание экземпляров.
 
@@ -167,3 +222,8 @@ print()
 print(manual_avg_students_grade(students_list))
 print()
 print(manual_avg_lecturers_grade(lecturers_list))
+print()
+courses_list()
+avg_students_grade(students_list, course_list)
+print()
+avg_lecturers_grade(lecturers_list, course_list)
