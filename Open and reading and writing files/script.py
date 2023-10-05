@@ -1,3 +1,6 @@
+import os
+from operator import itemgetter
+
 # Задача №1.
 def making_cook_book(file):
     with open(file, 'r', encoding='UTF-8') as f:
@@ -17,7 +20,8 @@ def making_cook_book(file):
 
 # Задача №2.
 def get_shop_list_by_dishes(dishes, person_count):
-    ingredients_book = {}
+    cook_book = making_cook_book('recipes.txt')
+    shop_list = {}
     for dish in dishes:
         if dish in cook_book:
             for idx in range(len(cook_book[dish])):
@@ -25,18 +29,37 @@ def get_shop_list_by_dishes(dishes, person_count):
                 dish_name = one_dish['ingredient_name']
                 quantity = one_dish['quantity']
                 measure = one_dish['measure']
-                if dish_name in ingredients_book:
+                if dish_name in shop_list:
                     ingredient_book = {dish_name: {'measure': measure, 'quantity': int(quantity) * person_count * len(dishes)}}
                 else:
                     ingredient_book = {dish_name: {'measure': measure, 'quantity': int(quantity) * person_count}}
-                ingredients_book.update(ingredient_book)
-            print(ingredients_book)
+                shop_list.update(ingredient_book)
+            print(shop_list)
         else:
             print('Такого блюда нет.')
-
-cook_book = making_cook_book('recipes.txt')
 
 get_shop_list_by_dishes(['Омлет'], 2)
 
 # Задача №3
 
+def getting_files_info():
+    files = []
+    for filename in os.listdir('files for 3rd task'):
+        file = os.path.join(os.getcwd(), 'files for 3rd task', filename)
+        with open(file, 'r', encoding='UTF-8') as f:
+            lines = f.readlines()
+            info = {'filename': filename, 'lines_length': len(lines), 'lines': lines}
+            files.append(info)
+    return files
+
+def sorting_files():
+    files_dict = getting_files_info()
+    return sorted(files_dict, key=itemgetter('lines_length'))
+
+def writing_new_file():
+    with open('merged.txt', 'w', encoding='UTF-8') as m:
+        sorted_list = sorting_files()
+        for idx, file in enumerate(sorted_list):
+            m.write(f"{sorted_list[idx].get('filename')}\n{sorted_list[idx].get('lines_length')}\n{''.join(sorted_list[idx].get('lines'))}\n")
+
+writing_new_file()
