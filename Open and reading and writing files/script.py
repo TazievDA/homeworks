@@ -34,9 +34,9 @@ def get_shop_list_by_dishes(dishes, person_count):
                 else:
                     ingredient_book = {dish_name: {'measure': measure, 'quantity': int(quantity) * person_count}}
                 shop_list.update(ingredient_book)
-            print(shop_list)
         else:
             print('Такого блюда нет.')
+    print(shop_list)
 
 get_shop_list_by_dishes(['Омлет'], 2)
 
